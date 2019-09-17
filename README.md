@@ -73,3 +73,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
   Nest is [MIT licensed](LICENSE).
+
+
+--Added Compression to decrease the size of the response body and hence increase the speed of a web app
+
