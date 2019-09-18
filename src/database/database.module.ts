@@ -16,7 +16,7 @@ import { ConfigService } from '../config/config.service';
           database: configService.configurations.databaseName,
           username: configService.configurations.databaseUsername,
           password: configService.configurations.databasePassword,
-          entities: ['src/**/*.entity{.ts,.js}'],
+          entities: [__dirname + '/../**/*.entity.{js,ts}'],
           migrations: ['src/**/*.migration{.ts,.js}'],
           synchronize: true,
           logging: true,
