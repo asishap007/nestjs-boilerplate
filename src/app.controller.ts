@@ -8,19 +8,18 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ConfigService } from './config/config.service';
+import * as config from 'config';
 
 @Controller()
 export class AppController {
   constructor(
-    private readonly appService: AppService,
-    private readonly configService: ConfigService,
+    private readonly appService: AppService
   ) {}
 
   @Get()
   getHello(): string {
-    const config = this.configService.configurations;
-    console.log('configurations domainName', config.domainName, config.port);
+    
+    console.log('configurations domainName', config.get('domainName'), config.get('port'));
     throw new InternalServerErrorException({ message: 'Forbidden path' });
   }
 }
