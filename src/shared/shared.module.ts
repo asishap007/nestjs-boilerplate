@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ResponseService } from './services/response.service';
+import { ResponseTransformInterceptor } from './services/response.service';
 
 @Module({
   imports: [],
-  providers: [ResponseService],
+  providers: [ResponseTransformInterceptor],
 })
 export class SharedModule {}

@@ -27,6 +27,7 @@
     "class-transformer": "^0.2.3",
     "class-validator": "^0.10.0",
     "config": "^3.2.2",
+    "express-rate-limit": "^5.0.0",
     "helmet": "^3.21.0",
     "nodemon": "^1.19.2",
     "pg": "^7.12.1",

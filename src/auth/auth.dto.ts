@@ -11,7 +11,7 @@ import {
 export class RegisterDto {
   @ApiModelProperty({ description: 'First name' })
   @IsString()
-  @IsEmpty()
+  @IsNotEmpty()
   firstName: string;
   @ApiModelProperty({ description: 'Last name' })
   lastName: string;

@@ -12,14 +12,15 @@ import * as config from 'config';
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly appService: AppService
-  ) {}
+  constructor(private readonly appService: AppService) {}
 
   @Get()
   getHello(): string {
-    
-    console.log('configurations domainName', config.get('domainName'), config.get('port'));
+    console.log(
+      'configurations domainName',
+      config.get('domainName'),
+      config.get('port'),
+    );
     throw new InternalServerErrorException({ message: 'Forbidden path' });
   }
 }

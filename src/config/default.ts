@@ -9,4 +9,8 @@ export default {
   databaseName: 'nest_boilerplate',
   databaseUsername: 'postgres',
   databasePassword: 'postgres',
+  rateLimiter: {
+    windowMs: 15 * 60 * 1000,
+    maxRequest: 100,
+  },
 };
