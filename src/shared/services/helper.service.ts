@@ -8,10 +8,6 @@ export class HelperService {
     return lodash.omit(object, keysToOmit);
   }
 
-  test() {
-    // console.log('test');
-  }
-
   generateUUID() {
     return UUID();
   }
