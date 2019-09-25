@@ -1,26 +1,11 @@
-import {
-  Controller,
-  Get,
-  HttpException,
-  HttpStatus,
-  UseFilters,
-  ForbiddenException,
-  InternalServerErrorException,
-} from '@nestjs/common';
-import { AppService } from './app.service';
-import * as config from 'config';
+import { Controller, Get, InternalServerErrorException } from '@nestjs/common';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-
   @Get()
   getHello(): string {
-    console.log(
-      'configurations domainName',
-      config.get('domainName'),
-      config.get('port'),
-    );
-    throw new InternalServerErrorException({ message: 'Forbidden path' });
+    throw new InternalServerErrorException({
+      message: 'Forbidden path',
+    });
   }
 }

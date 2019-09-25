@@ -3,10 +3,10 @@ import {
   ExecutionContext,
   NestInterceptor,
   CallHandler,
+  HttpStatus,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { HttpStatus } from '@nestjs/common';
 
 export interface Response<T> {
   hasError: boolean;
@@ -21,14 +21,12 @@ export class ResponseTransformInterceptor<T>
     context: ExecutionContext,
     next: CallHandler,
   ): Observable<Response<T>> {
-    return next
-      .handle()
-      .pipe(
-        map(data => ({
-          hasError: false,
-          body: data,
-          statusCode: HttpStatus.OK,
-        })),
-      );
+    return next.handle().pipe(
+      map(data => ({
+        hasError: false,
+        body: data,
+        statusCode: HttpStatus.OK,
+      })),
+    );
   }
 }
