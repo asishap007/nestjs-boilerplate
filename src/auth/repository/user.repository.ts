@@ -7,9 +7,18 @@ import { Injectable } from '@nestjs/common';
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   createUser(registerDto: RegisterDto): Promise<any> {
-    const { firstName, lastName, email, password } = registerDto;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      resetPasswordToken,
+      resetPasswordTokenExpireDate,
+    } = registerDto;
     const user = new User(firstName, lastName, email);
     user.password = password;
+    user.resetPasswordToken = resetPasswordToken;
+    user.resetPasswordTokenExpiry = resetPasswordTokenExpireDate;
     return user.save();
   }
 
@@ -21,5 +30,14 @@ export class UserRepository extends Repository<User> {
     } else {
       return null;
     }
+  }
+
+  async updateResetToken(id, resetPasswordToken, resetPasswordTokenExpireDate) {
+    const user: User = await this.findOne({ id });
+    if (user) {
+      user.resetPasswordToken = resetPasswordToken;
+      user.resetPasswordTokenExpiry = resetPasswordTokenExpireDate;
+    }
+    return user.save();
   }
 }

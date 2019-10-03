@@ -4,27 +4,31 @@ import {
   HttpStatus,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserRepository } from './repository/user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
+import { UserRepository } from './repository/user.repository';
 import { RegisterDto, LoginDto } from './auth.dto';
 import {
   AppError,
   AppErrorTypeEnum,
 } from '../shared/exception-filters/AppError';
 import { HelperService } from '../shared/services/helper.service';
-import { JwtService } from '@nestjs/jwt';
+import { EmailService } from '../shared/services/email.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private helperService: HelperService,
     private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
     @InjectRepository(UserRepository)
     private readonly userRepository: UserRepository,
   ) {}
 
   async createUser(registerDto: RegisterDto): Promise<any> {
     registerDto.password = this.helperService.generateUUID();
+    registerDto.resetPasswordToken = this.helperService.getRandomKeys();
+    registerDto.resetPasswordTokenExpireDate = this.helperService.addHours(5);
     // tslint:disable-next-line: no-console
     console.log('user password', registerDto.password);
     return this.userRepository
@@ -54,5 +58,23 @@ export class AuthService {
     const accessToken: string = this.jwtService.sign(userResponse);
     userResponse.jwtToken = accessToken;
     return userResponse;
+  }
+
+  async resetPasswordLink(
+    id,
+    templateName,
+    subject,
+    locals,
+    toEmails,
+  ): Promise<void> {
+    const resetPasswordToken = this.helperService.getRandomKeys();
+    const resetPasswordTokenExpireDate = this.helperService.addHours(5);
+    const user = await this.userRepository.updateResetToken(
+      id,
+      resetPasswordToken,
+      resetPasswordTokenExpireDate,
+    );
+    locals.token = user.resetPasswordToken;
+    this.emailService.sendEmail(templateName, locals, subject, toEmails);
   }
 }

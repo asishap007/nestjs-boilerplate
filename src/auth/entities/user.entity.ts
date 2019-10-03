@@ -32,6 +32,12 @@ export class User extends BaseEntity {
   @Column()
   password: string;
 
+  @Column({ nullable: true })
+  resetPasswordToken: string;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  resetPasswordTokenExpiry: Date;
+
   @OneToMany(type => UserRole, userRole => userRole.user)
   userRoles: UserRole[];
 

@@ -13,8 +13,9 @@ export class RegisterDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
-
   password: string;
+  resetPasswordToken: string;
+  resetPasswordTokenExpireDate: Date;
 }
 
 export class LoginDto {
