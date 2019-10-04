@@ -26,7 +26,7 @@ export class EmailService {
     template: string,
     locals: any,
     subject: string,
-    to: Array<string>,
+    to: string[],
     from: string = 'asishap007@gmail.com',
   ): Promise<any> {
     this.emailer
@@ -39,6 +39,7 @@ export class EmailService {
         },
         locals,
       })
+      // tslint:disable-next-line: no-console
       .then(() => console.log('email has been sent!'));
   }
 }

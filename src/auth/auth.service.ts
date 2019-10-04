@@ -1,17 +1,9 @@
-import {
-  Injectable,
-  HttpException,
-  HttpStatus,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from './repository/user.repository';
-import { RegisterDto, LoginDto } from './auth.dto';
-import {
-  AppError,
-  AppErrorTypeEnum,
-} from '../shared/exception-filters/AppError';
+import { RegisterDto, LoginDto, ResetPasswordDto } from './auth.dto';
+import { AppError, AppErrorTypeEnum } from '../shared/exception-filters/AppError';
 import { HelperService } from '../shared/services/helper.service';
 import { EmailService } from '../shared/services/email.service';
 
@@ -27,26 +19,26 @@ export class AuthService {
 
   async createUser(registerDto: RegisterDto): Promise<any> {
     registerDto.password = this.helperService.generateUUID();
-    registerDto.resetPasswordToken = this.helperService.getRandomKeys();
-    registerDto.resetPasswordTokenExpireDate = this.helperService.addHours(5);
     // tslint:disable-next-line: no-console
     console.log('user password', registerDto.password);
-    return this.userRepository
-      .createUser(registerDto)
-      .then(res => {
-        return this.helperService.omit(res, ['password']);
-      })
-      .catch((err: any) => {
-        if (err.code === '23505') {
-          // Duplicate user
-          throw new AppError(AppErrorTypeEnum.USER_EXISTS);
-        } else {
-          throw new HttpException(
-            err.message,
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-      });
+    try {
+      const user = await this.userRepository.createUser(registerDto);
+      await this.resetPasswordLink(
+        user.id,
+        'resetPassword',
+        'ICX-Change Password',
+        { name: `${user.firstName} ${user.lastName}` },
+        [`${user.email}`],
+      );
+      return this.helperService.omit(user, ['password']);
+    } catch (exception) {
+      if (exception.code === '23505') {
+        // Duplicate user
+        throw new AppError(AppErrorTypeEnum.USER_EXISTS);
+      } else {
+        throw new HttpException(exception.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
   }
 
   async login(loginDto: LoginDto): Promise<any> {
@@ -60,21 +52,15 @@ export class AuthService {
     return userResponse;
   }
 
-  async resetPasswordLink(
-    id,
-    templateName,
-    subject,
-    locals,
-    toEmails,
-  ): Promise<void> {
+  async resetPasswordLink(id, templateName, subject, locals, toEmails): Promise<void> {
     const resetPasswordToken = this.helperService.getRandomKeys();
     const resetPasswordTokenExpireDate = this.helperService.addHours(5);
-    const user = await this.userRepository.updateResetToken(
-      id,
-      resetPasswordToken,
-      resetPasswordTokenExpireDate,
-    );
-    locals.token = user.resetPasswordToken;
+    const user = await this.userRepository.updateResetToken(id, resetPasswordToken, resetPasswordTokenExpireDate);
+    locals.token = `http://localhost/changepassword?resetToken=${user.resetPasswordToken}`;
     this.emailService.sendEmail(templateName, locals, subject, toEmails);
+  }
+
+  async changePassword(resetPasswordDto: ResetPasswordDto) {
+    return this.userRepository.changePassword(resetPasswordDto);
   }
 }

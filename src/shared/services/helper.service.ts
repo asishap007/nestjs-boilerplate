@@ -3,7 +3,6 @@ import * as lodash from 'lodash';
 import * as UUID from 'uuid/v4';
 import * as Momemt from 'moment';
 import * as Crypto from 'crypto-js';
-import * as jwt from '@nestjs/jwt';
 @Injectable()
 export class HelperService {
   omit(object: any, keysToOmit: string[]) {

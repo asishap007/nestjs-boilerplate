@@ -30,3 +30,20 @@ export class LoginDto {
   @IsNotEmpty()
   password: string;
 }
+
+export class ResetPasswordDto {
+  @ApiModelProperty({ description: 'Password' })
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+
+  @ApiModelProperty({ description: 'Confirm Password' })
+  @IsString()
+  @IsNotEmpty()
+  cpassword: string;
+
+  @ApiModelProperty({ description: 'Reset token' })
+  @IsString()
+  @IsNotEmpty()
+  resetToken: string;
+}

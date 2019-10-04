@@ -8,13 +8,7 @@ interface ExceptionResponse {
   stackTrace?: string;
 }
 
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AppError } from './AppError';
 
@@ -33,10 +27,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         httpCode: exception.httpStatus,
       });
     }
-    const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+    const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
     const exceptionResponse: any = exception.getResponse() || {
       message: exception.message,
